@@ -2,15 +2,15 @@
 "##################################################################################################################
 call plug#begin()
 Plug 'farmergreg/vim-lastplace' " open lastplace 
-Plug 'numToStr/Comment.nvim' " toggle comment (keymap: gc)
 Plug 'kylechui/nvim-surround' " deal with (),[]...
+Plug 'tpope/vim-commentary' " toggle comment 
 Plug 'chrisbra/NrrwRgn' " create a scratch file for selected region
 Plug 'Romainl/vim-cool' " it's cool
 Plug 'windwp/nvim-autopairs' " autopair (),[]...
 Plug 'rhysd/clever-f.vim' "enhance f functionality
 Plug 'akinsho/toggleterm.nvim' " toggle terminal in vim
 Plug 'max397574/better-escape.nvim' 
-Plug 'justinmk/vim-sneak' "vim motion
+Plug 'folke/flash.nvim' " flash motion
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } } " auto-generate doc string
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " syntax highlight
 Plug 'nvim-treesitter/nvim-treesitter-textobjects' " extended text objects
@@ -23,7 +23,7 @@ Plug 'mhinz/vim-startify' " starup page
 Plug 'folke/todo-comments.nvim' " hilight todo
 Plug 'abecodes/tabout.nvim' " jump out (),[], <c-q>
 Plug 'nvim-lualine/lualine.nvim' " status line
-Plug 'ryanoasis/vim-devicons' " icons
+Plug 'nvim-tree/nvim-web-devicons' " icons
 Plug 'stevearc/conform.nvim' " code formating
 Plug 'nvim-lua/plenary.nvim' " telescope requirement
 Plug 'nvim-telescope/telescope.nvim' " find file, find diagonstics, ... , find everything 
@@ -37,6 +37,8 @@ Plug 'hrsh7th/cmp-buffer' " buffer completion
 Plug 'hrsh7th/cmp-path' " path completion
 Plug 'hrsh7th/cmp-cmdline' " command completion
 Plug 'hrsh7th/nvim-cmp' " completion core
+Plug 'onsails/lspkind.nvim' " completion icons
+Plug 'ray-x/lsp_signature.nvim' " show parameter in function
 " snippet
 Plug 'L3MON4D3/LuaSnip', {'tag': 'v2.*', 'do': 'make install_jsregexp'} " snippet eingine
 Plug 'saadparwaiz1/cmp_luasnip' " snippet completion
@@ -61,7 +63,8 @@ set ignorecase
 set termguicolors
 set visualbell
 set t_vb=
-colorscheme catppuccin-mocha
+lua require('catppuccin').setup{flavour="mocha", transparent_background=true}
+colorscheme catppuccin
 "##################################################################################################################
 
 
@@ -70,6 +73,8 @@ colorscheme catppuccin-mocha
 "NOTE:  mappings
 "##################################################################################################################
 let mapleader=' '
+nnoremap <c-j> 10j
+nnoremap <c-k> 10k
 nnoremap <silent><leader>e <cmd>!python3 %<cr>
 nnoremap <silent><leader>w <cmd>w<cr>
 nnoremap <silent><leader>q <cmd>q<cr>
@@ -79,20 +84,19 @@ nnoremap <silent><leader>r <cmd>lua require("conform").format()<cr>
 nnoremap <silent><leader>s <cmd>lua Toggle_diagnostics()<cr>
 nnoremap <silent><leader>p <cmd>Telescope find_files<cr>
 nnoremap <silent><leader>o <cmd>NvimTreeToggle<cr>
-nnoremap <silent><leader>ha <cmd>:lua require('telescope.builtin').lsp_document_symbols({ symbols='function' })<cr>
+nnoremap <silent><leader>hf <cmd>:lua require('telescope.builtin').lsp_document_symbols({ symbols='function' })<cr>
 nnoremap <silent><leader>hs <cmd>Telescope diagnostics<cr>
-nnoremap <silent><leader>hh <cmd>lua require('goto-preview').goto_preview_definition()<cr>
-nnoremap <silent><leader>hj <cmd>lua require('goto-preview').goto_preview_declaration()<cr>
-nnoremap <silent><leader>hk <cmd>lua require('goto-preview').goto_preview_references()<cr>
-nnoremap <silent>g] <cmd>lua require("todo-comments").jump_next()<cr>
-nnoremap <silent>g[ <cmd>lua require("todo-comments").jump_prev()<cr>
+nnoremap <silent><leader>hw <cmd>lua require('goto-preview').goto_preview_definition()<cr>
+nnoremap <silent><leader>he <cmd>lua require('goto-preview').goto_preview_references()<cr>
+nnoremap <silent><leader>ha <cmd>lua vim.lsp.buf.hover()<cr>
+nnoremap <silent><leader>hx <cmd>lua vim.lsp.buf.rename()<cr>
 nnoremap <silent>gd <cmd>lua vim.lsp.buf.definition()<cr>
 nnoremap <silent>gD <cmd>lua vim.lsp.buf.declaration()<cr>
 nnoremap <silent>gr <cmd>lua vim.lsp.buf.references()<cr>
-map <leader>f <Plug>Sneak_s
-map <leader>d <Plug>Sneak_S
-map <C-f> <Plug>Sneak_;
-map <C-d> <Plug>Sneak_,
+nnoremap <silent>g] <cmd>lua require("todo-comments").jump_next()<cr>
+nnoremap <silent>g[ <cmd>lua require("todo-comments").jump_prev()<cr>
+nnoremap <silent><leader>f <cmd>lua require("flash").jump()<cr>
+xnoremap <silent><leader>f <cmd>lua require("flash").jump()<cr>
 let g:doge_mapping= '<leader>u'
 nmap <c-n> <plug>(YoinkPostPasteSwapBack)
 nmap <c-b> <plug>(YoinkPostPasteSwapForward)
@@ -107,13 +111,10 @@ autocmd TermEnter term://*toggleterm#* tnoremap <silent><c-h> <cmd>exe v:count1 
 "##################################################################################################################
 let g:clever_f_smart_case=1
 let g:better_escape_shortcut = 'dd'
-let g:sneak#label = 1
-let g:sneak#use_ic_scs = 1
 let g:doge_doc_standard_python = 'numpy'
 let g:loaded_netrw = 1
 let g:loaded_netrwPlugin = 1
 let g:better_escape_interval = 200
-hi Sneak guibg=#bdffda guifg=black 
 let g:nrrw_topbot_leftright = 'botright'
 nmap p <plug>(YoinkPaste_p)
 nmap P <plug>(YoinkPaste_P)
@@ -132,8 +133,8 @@ lua require('tabout').setup{tabkey='<C-q>',backwards_tabkey='<C-w>'}
 lua require('nvim-toggler').setup()
 lua require('nvim-autopairs').setup()
 lua require('nvim-surround').setup()
-lua require('Comment').setup()
 lua require('goto-preview').setup()
+lua require('flash').setup()
 
 
 lua << EOF
@@ -164,7 +165,8 @@ EOF
 lua << EOF
 require("oil").setup{
 	delete_to_trash = true,
-	float = {max_width=90,max_height=30}
+	float = {max_width=90,max_height=30},
+	columns = {"icon"}
 }
 EOF
 
@@ -322,6 +324,7 @@ lua <<EOF
       { name = 'luasnip' }, -- For luasnip users.
     }, {
       { name = 'buffer' },
+      { name = 'path'}
     }),
   })
 
@@ -382,6 +385,26 @@ function Toggle_diagnostics()
     end
 end
 EOF
+
+lua << EOF
+local cmp = require'cmp'
+cmp.setup {
+  formatting = {
+    format = function(entry, vim_item)
+      if vim.tbl_contains({ 'path' }, entry.source.name) then
+        local icon, hl_group = require('nvim-web-devicons').get_icon(entry:get_completion_item().label)
+        if icon then
+          vim_item.kind = icon
+          vim_item.kind_hl_group = hl_group
+          return vim_item
+        end
+      end
+      return require('lspkind').cmp_format({ with_text = false })(entry, vim_item)
+    end
+  }
+}
+EOF
+
+lua require "lsp_signature".setup()
+
 "##################################################################################################################
-
-
