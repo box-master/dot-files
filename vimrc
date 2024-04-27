@@ -35,11 +35,13 @@ set laststatus=2
 
 let mapleader = ' '
 inoremap dd <Esc>
-nnoremap <leader>w <cmd>w<cr>
-nnoremap <leader>q <cmd>q<cr>
-nnoremap <leader>e <cmd>!python3 %<cr>
-nnoremap <leader>a <cmd>Vex!<cr>
-nnoremap <leader>h <cmd>noh<cr>
+nnoremap <silent><leader>w <cmd>w<cr>
+nnoremap <silent><leader>q <cmd>q<cr>
+nnoremap <silent><leader>a <cmd>Vex!<cr>
+nnoremap <silent><leader>h <cmd>noh<cr>
 nnoremap <c-j> 10j
 nnoremap <c-k> 10k
+autocmd FileType python nnoremap <buffer> <silent><leader>e <cmd>vsp<cr><cmd>wincmd l<cr><cmd>term python %<cr>
+autocmd FileType c nnoremap <buffer> <silent><leader>e <cmd>vsp<cr><cmd>wincmd l<cr><cmd>term gcc  % && ./a.out<cr>
+autocmd FileType cuda nnoremap <buffer> <silent><leader>e <cmd>vsp<cr><cmd>wincmd l<cr><cmd>term nvcc % && ./a.out<cr>
 
