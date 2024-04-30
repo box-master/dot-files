@@ -19,6 +19,7 @@ set nobackup
 set nowb
 set noswapfile
 set smarttab
+set showmatch
 
 colorscheme koehler  
 
@@ -33,15 +34,21 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 set laststatus=2
 
 
+command -nargs=1 SearchWindow :vimgrep <args> % <bar> :cwin
+command -nargs=1 Rename :%s//<args>/g
 let mapleader = ' '
 inoremap dd <Esc>
 nnoremap <silent><leader>w <cmd>w<cr>
 nnoremap <silent><leader>q <cmd>q<cr>
 nnoremap <silent><leader>a <cmd>Vex!<cr>
 nnoremap <silent><leader>h <cmd>noh<cr>
+nnoremap <leader>p :SearchWindow 
+nnoremap <leader>x :Rename  
 nnoremap <c-j> 10j
 nnoremap <c-k> 10k
-autocmd FileType python nnoremap <buffer> <silent><leader>e <cmd>vsp<cr><cmd>wincmd l<cr><cmd>term python %<cr>
-autocmd FileType c nnoremap <buffer> <silent><leader>e <cmd>vsp<cr><cmd>wincmd l<cr><cmd>term gcc  % && ./a.out<cr>
-autocmd FileType cuda nnoremap <buffer> <silent><leader>e <cmd>vsp<cr><cmd>wincmd l<cr><cmd>term nvcc % && ./a.out<cr>
+nnoremap <c-h> 10h
+nnoremap <c-l> 10l
+autocmd FileType python nnoremap <buffer> <silent><leader>e <cmd>vertical botright term python %<cr>
+autocmd FileType c nnoremap <buffer> <leader>e <cmd>!gcc %<cr><cmd>vertical botright term ./a.out<cr>
+autocmd FileType cuda nnoremap <buffer> <leader>e <cmd>!nvcc  %<cr><cr><cmd>vertical botright term ./a.out<cr>
 
