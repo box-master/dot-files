@@ -19,7 +19,6 @@ set nobackup
 set nowb
 set noswapfile
 set smarttab
-set showmatch
 
 colorscheme koehler  
 
@@ -31,7 +30,7 @@ let g:netrw_winsize = 25
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-set laststatus=2
+set laststatus=1
 
 
 command -nargs=1 SearchWindow :vimgrep <args> % <bar> :cwin
